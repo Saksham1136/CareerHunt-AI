@@ -1,291 +1,290 @@
-# 🤖 Multi-Agent AI Job Seeker
+# 🤖 CareerHunt AI — Multi-Agent AI Job Seeker System
 
-> An AI-powered application that helps job seekers find relevant jobs, optimize their resumes for ATS, and prepare for interviews — built with a modular multi-agent architecture.
+> **Find jobs · Optimize your resume · Ace your interviews — all powered by AI**
 
-![Python](https://img.shields.io/badge/Python-3.10+-blue)
-![Streamlit](https://img.shields.io/badge/UI-Streamlit-red)
-![Groq](https://img.shields.io/badge/LLM-Groq%20LLaMA%203-green)
-![CrewAI](https://img.shields.io/badge/Agents-CrewAI-purple)
-![License](https://img.shields.io/badge/License-MIT-yellow)
-
----
-
-## 📋 Table of Contents
-
-- [Project Overview](#-project-overview)
-- [System Architecture](#-system-architecture)
-- [Agent Responsibilities](#-agent-responsibilities)
-- [Tech Stack](#-tech-stack)
-- [Folder Structure](#-folder-structure)
-- [Quick Start (Local)](#-quick-start-local)
-- [Deployment Guide](#-deployment-guide)
-- [How to Use](#-how-to-use)
-- [Design Decisions](#-design-decisions)
-- [Limitations & Future Improvements](#-limitations--future-improvements)
+[![Python](https://img.shields.io/badge/Python-3.10+-blue?logo=python)](https://python.org)
+[![Streamlit](https://img.shields.io/badge/Streamlit-1.35+-red?logo=streamlit)](https://streamlit.io)
+[![Groq](https://img.shields.io/badge/Groq-LLaMA_3.1-orange)](https://console.groq.com)
+[![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 
 ---
 
-## 🎯 Project Overview
+## 📌 What is CareerHunt AI?
 
-The Multi-Agent AI Job Seeker is a production-quality Python application that supports users across the entire job application lifecycle:
+**CareerHunt AI** is a full-stack multi-agent AI application that automates the three hardest parts of job hunting:
 
-1. **Job Discovery** — Search and rank relevant job openings by role, location, and experience
-2. **Resume Optimization** — Tailor and ATS-optimize your resume for a specific job description
-3. **Interview Preparation** — Get role-specific technical + behavioral Q&A with model answers
-4. **Resume Download** — Download your optimized resume as a formatted ATS-friendly DOCX file
+1. 🔍 **Job Discovery** — Searches and ranks jobs by role, location, and experience with direct LinkedIn / Naukri / Indeed apply links
+2. 📝 **Resume Optimization** — Rewrites your resume to pass ATS filters, shows before/after score, downloads as professional DOCX
+3. 🎤 **Interview Preparation** — Generates role-specific technical, behavioral, and system design Q&A pulled from the actual JD — downloads as PDF
+
+Built as a portfolio project to demonstrate **multi-agent AI architecture**, **LLM integration**, **full-stack development**, and **production-ready engineering practices**.
+
+---
+
+## ✨ Features
+
+| Feature | Description |
+|---------|-------------|
+| 🔍 Job Search | Fuzzy role matching across 18+ Indian tech companies |
+| 🔗 Apply Links | Every job has LinkedIn, Naukri, and Indeed buttons |
+| 🎯 ATS Keywords | Extracts must-have, tools, and soft skill keywords per search |
+| 📊 ATS Score | Before/after resume score with matched/missing keyword pills |
+| ⬇️ DOCX Download | Professional ATS resume — navy/blue theme, Calibri font, proper sections |
+| 🎤 Interview Q&A | 7 technical + 5 behavioral + 3 system design questions from your JD |
+| 📄 PDF Download | Formatted interview prep PDF — ready instantly, no page refresh |
+| 💾 Dashboard | All searches, resumes, and interview sessions saved to your account |
+| 🔐 Auth System | Register/login with bcrypt-hashed passwords |
+| 🛡️ Admin Panel | User management, activity log, platform insights |
 
 ---
 
 ## 🏗️ System Architecture
 
 ```
-User Input (Streamlit UI)
-        │
-        ▼
-┌─────────────────────────┐
-│   Orchestrator (CrewAI)  │  ← Manages agent sequence & error handling
-└─────────────────────────┘
-        │
-   ┌────┴──────────────────────────────────┐
-   │              │              │          │
-   ▼              ▼              ▼          ▼
-Job Discovery  Job Profiling  Resume    Interview
-   Agent          Agent        Agent      Agent
-   │               │             │          │
-   └───────────────┴─────────────┴──────────┘
-                        │
-                        ▼
-            Results displayed in Streamlit
-         (Jobs + ATS Score + Resume Download + Q&A)
+                        ┌─────────────────────────┐
+                        │     Orchestrator Agent   │
+                        │   (crew_orchestrator.py) │
+                        └──────┬──────┬──────┬─────┘
+                               │      │      │
+               ┌───────────────┘      │      └───────────────┐
+               ▼                      ▼                       ▼
+    ┌──────────────────┐  ┌───────────────────┐  ┌───────────────────┐
+    │  Job Discovery   │  │ Resume Optimizer  │  │ Interview Prep    │
+    │     Agent        │  │     Agent         │  │     Agent         │
+    └────────┬─────────┘  └────────┬──────────┘  └────────┬──────────┘
+             │                     │                       │
+             └─────────────────────┼───────────────────────┘
+                                   ▼
+                        ┌──────────────────┐
+                        │  Job Profiling   │
+                        │     Agent        │
+                        └──────────────────┘
+                                   │
+                                   ▼
+                          Streamlit UI → User
 ```
 
-### Data Flow
+### What each agent does
 
-```
-1. User submits: role, location, experience, resume, JD
-2. Orchestrator → Job Discovery Agent → ranked job listings
-3. Orchestrator → Job Profiling Agent → structured job profile (skills, keywords, responsibilities)
-4. Job Profile → Resume Agent → ATS-optimized resume + DOCX file
-5. Job Profile → Interview Agent → Q&A + preparation tips
-6. All results → Streamlit UI
-```
-
----
-
-## 🤖 Agent Responsibilities
-
-| Agent | Input | Output | Why Separate? |
-|-------|-------|--------|---------------|
-| **Job Discovery** | role, location, experience | Ranked job list | Swappable data source (mock → live API) |
-| **Job Profiling** | Job description text | Structured profile (skills, keywords) | Both Resume & Interview agents need this; parse once, share everywhere |
-| **Resume Optimizer** | Resume text + Job profile | ATS resume text + DOCX file | Involves NLP, document generation — distinct concern |
-| **Interview Prep** | Job profile | Technical + behavioral Q&A | Pure generative task, stateless |
-| **Orchestrator** | All inputs | Unified result dict | Decouples agents; one failure doesn't break everything |
+| Agent | Input | Output |
+|-------|-------|--------|
+| **Job Discovery** | Role, location, experience | Ranked job list with relevance scores |
+| **Job Profiling** | Job description text | Domain, seniority, skills, keywords |
+| **Resume Optimizer** | Resume + Job Profile | ATS score, optimized text, DOCX file |
+| **Interview Prep** | Job Profile + Resume | Deep Q&A based on actual JD content |
+| **Orchestrator** | All user inputs | Runs agents in order, passes outputs between them |
 
 ---
 
 ## 🛠️ Tech Stack
 
-| Component | Technology | Why |
-|-----------|-----------|-----|
-| Language | Python 3.10+ | Industry standard for AI/ML |
-| LLM | Groq (LLaMA 3 8B) | Free tier, fast inference |
-| Agent Framework | CrewAI | Role-based multi-agent design |
-| UI | Streamlit | Fast, Python-native, deployable |
-| Document Generation | python-docx | ATS-safe DOCX generation |
-| NLP | Custom keyword extractor | Lightweight, no heavy model downloads |
-| Config | python-dotenv | Secure API key handling |
+| Technology | Purpose | Why |
+|-----------|---------|-----|
+| **Python 3.10+** | Core language | Best AI/ML ecosystem |
+| **Groq LLaMA 3.1** | LLM backbone | Free tier, fastest inference (LPU hardware) |
+| **CrewAI** | Multi-agent framework | Purpose-built for role-based agent workflows |
+| **Streamlit** | Web UI | Python-native, rapid development |
+| **SQLite + bcrypt** | Auth & persistence | Zero-setup DB, industry-standard password hashing |
+| **python-docx** | DOCX resume generation | ATS-friendly, fully editable output |
+| **reportlab** | PDF interview prep | Professional formatted reports |
 
 ---
 
-## 📁 Folder Structure
+## 📁 Project Structure
 
 ```
-job_seeker_ai/
+CareerHunt-AI/
 │
-├── agents/                        # One file per agent
-│   ├── job_discovery_agent.py     # Searches and ranks job listings
-│   ├── job_profiling_agent.py     # Parses job descriptions
-│   ├── resume_agent.py            # Optimizes and formats resumes
-│   └── interview_agent.py         # Generates interview Q&A
+├── agents/
+│   ├── job_discovery_agent.py   # Searches & ranks jobs with fuzzy matching
+│   ├── job_profiling_agent.py   # Extracts skills/keywords from JD
+│   ├── resume_agent.py          # ATS scoring + resume rewriting
+│   └── interview_agent.py       # Deep JD-aware Q&A generation
 │
 ├── orchestrator/
-│   └── crew_orchestrator.py       # Coordinates all agents
+│   └── crew_orchestrator.py     # Runs full pipeline via CrewAI
 │
-├── tools/                         # Reusable utilities
-│   ├── nlp_utils.py               # Keyword extraction, scoring
-│   ├── resume_parser.py           # Parse .txt and .docx uploads
-│   ├── resume_formatter.py        # Generate ATS DOCX output
-│   └── job_data_loader.py         # Load & filter job dataset
+├── tools/
+│   ├── nlp_utils.py             # Keyword extraction, ATS scoring
+│   ├── job_data_loader.py       # Job search with role aliases
+│   ├── resume_parser.py         # Parse .txt and .docx uploads
+│   └── resume_formatter.py      # Generate professional ATS DOCX
+│
+├── auth/
+│   └── auth_manager.py          # bcrypt hashing, login, session state
+│
+├── database/
+│   └── db_manager.py            # SQLite schema + CRUD operations
 │
 ├── data/
-│   ├── sample_jobs.json           # 12 realistic mock job listings
-│   └── ats_keywords.json          # ATS keyword reference data
-│
-├── ui/
-│   └── app.py                     # Streamlit UI (all pages + components)
+│   ├── sample_jobs.json         # 18 realistic Indian tech job listings
+│   └── ats_keywords.json        # ATS keyword bank by domain
 │
 ├── config/
-│   └── settings.py                # Centralized config & env vars
+│   └── settings.py              # API keys, model name, app config
+│
+├── ui/
+│   └── app.py                   # Complete Streamlit app (all in one file)
 │
 ├── tests/
-│   ├── test_job_discovery.py      # Tests for job search logic
-│   └── test_nlp_utils.py          # Tests for NLP utilities
+│   ├── test_job_discovery.py
+│   └── test_nlp_utils.py
 │
-├── outputs/                       # Generated resume files (gitignored)
-├── .streamlit/config.toml         # Streamlit theme & server config
-├── .env.example                   # Template for API keys
-├── .gitignore
+├── outputs/                     # Generated DOCX/PDF (gitignored)
+├── make_admin.py                # Promote user to admin role
 ├── requirements.txt
-├── run.sh                         # One-command local startup
+├── .env.example
 └── README.md
 ```
 
 ---
 
-## 🚀 Quick Start (Local)
+## 🚀 Local Setup (Step by Step)
 
-### Prerequisites
-- Python 3.10 or higher
-- A free Groq API key from [console.groq.com](https://console.groq.com)
-
-### Step 1: Clone the repository
+### Step 1 — Clone the repo
 ```bash
-git clone https://github.com/yourusername/job-seeker-ai.git
-cd job-seeker-ai
+git clone https://github.com/Saksham1136/CareerHunt-AI.git
+cd CareerHunt-AI
 ```
 
-### Step 2: Create virtual environment
+### Step 2 — Create virtual environment
 ```bash
-python3 -m venv venv
-source venv/bin/activate        # On Windows: venv\Scripts\activate
+python -m venv venv
+
+# Windows
+venv\Scripts\activate
+
+# Mac / Linux
+source venv/bin/activate
 ```
 
-### Step 3: Install dependencies
+### Step 3 — Install dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-### Step 4: Set up your API key
+### Step 4 — Add Groq API key
 ```bash
 cp .env.example .env
-# Open .env and replace 'your_groq_api_key_here' with your actual key
 ```
+Open `.env` and paste your key:
+```
+GROQ_API_KEY=your_actual_key_here
+```
+👉 Get a **free** key at [console.groq.com](https://console.groq.com) — no credit card needed.
 
-### Step 5: Run the app
+### Step 5 — Run the app
 ```bash
 streamlit run ui/app.py
 ```
-The app will open at **http://localhost:8501**
+Open **http://localhost:8501** in your browser.
 
-Or use the one-command script:
+---
+
+## 🔑 Default Login
+
+```
+Username : admin
+Password : admin123
+```
+> Change this immediately in the Admin Panel after first login.
+
+---
+
+## 🌐 Deploy Free on Streamlit Cloud
+
 ```bash
-bash run.sh
+# 1. Push to GitHub
+git init
+git add .
+git commit -m "Initial commit - CareerHunt AI"
+git branch -M main
+git remote add origin https://github.com/Saksham1136/CareerHunt-AI.git
+git push -u origin main
 ```
 
-### Run tests
-```bash
-pytest tests/ -v
+```
+2. Go to → share.streamlit.io
+3. Sign in with GitHub
+4. Click "New app"
+5. Repository  : Saksham1136/CareerHunt-AI
+   Branch      : main
+   Main file   : ui/app.py
+6. Advanced Settings → Secrets → paste:
+   GROQ_API_KEY = "your_actual_key_here"
+7. Click Deploy — live in ~2 minutes 🎉
 ```
 
----
-
-## 🌐 Deployment Guide
-
-### Deploy to Streamlit Cloud (Free)
-
-1. Push your code to a **public GitHub repository**
-2. Go to [share.streamlit.io](https://share.streamlit.io)
-3. Click **"New App"**
-4. Connect your GitHub repo
-5. Set **Main file path** to: `ui/app.py`
-6. Click **"Advanced settings"** → add your environment variable:
-   ```
-   GROQ_API_KEY = your_actual_groq_key
-   ```
-7. Click **"Deploy"** — your app goes live in ~2 minutes!
-
-### Deploy to Hugging Face Spaces (Alternative)
-
-1. Create a new Space at [huggingface.co/spaces](https://huggingface.co/spaces)
-2. Choose **Streamlit** as the SDK
-3. Upload all project files
-4. Add `GROQ_API_KEY` in **Settings → Repository secrets**
-5. The Space builds and deploys automatically
+> ⚠️ SQLite resets on Streamlit Cloud restarts (idle timeout). Fine for demos. For production use [Supabase](https://supabase.com) free PostgreSQL.
 
 ---
 
-## 📖 How to Use
+## 📄 Resume Upload Formats
 
-1. **Fill in the sidebar:**
-   - Enter your target job role (e.g., "Data Scientist")
-   - Set your preferred location and years of experience
-   - Paste or upload your current resume
-   - Paste a job description you want to apply for (optional)
-
-2. **Choose a run mode:**
-   - **Full Pipeline** — runs all 4 agents (recommended)
-   - **Job Search Only** — just find matching jobs
-   - **Resume Optimization Only** — tailor resume to a specific JD
-   - **Interview Prep Only** — generate Q&A for a role
-
-3. **Click "Run AI Pipeline"** and wait ~30-60 seconds
-
-4. **Review results across tabs:**
-   - 🔍 Jobs Found — ranked listings with skills breakdown
-   - 📝 Optimized Resume — ATS score, keyword analysis, download button
-   - 🎤 Interview Prep — technical, behavioral, and system design Q&A
-   - 🔬 Job Profile — structured analysis of the job description
+| Format | Supported |
+|--------|-----------|
+| `.txt` plain text | ✅ Best |
+| `.docx` Word doc | ✅ Works |
+| `.pdf` | ❌ Not supported |
 
 ---
 
-## 🧠 Design Decisions
+## 🔐 Security Practices
 
-**Why separate agents instead of one big prompt?**
-Each agent has a single responsibility, making them independently testable, replaceable, and debuggable. If the Resume Agent fails, the Interview Agent still runs.
+- Passwords hashed with **bcrypt** — never stored in plain text
+- Session state fully cleared on logout
+- Admin pages protected with role check on every page load
+- All DB queries enforce `user_id` ownership — users can only see/delete their own data
 
-**Why Groq instead of OpenAI?**
-Groq's free tier offers extremely fast inference (LPU hardware). For a portfolio/demo project, speed matters and cost = $0.
+---
 
-**Why a mock job dataset instead of a live API?**
-LinkedIn and Indeed require paid developer access. A well-structured mock dataset demonstrates identical engineering skill without demo failures or API costs.
+## 🔮 Planned Features
 
-**Why python-docx instead of PDF for resume download?**
-DOCX is editable (users want to make final tweaks) and widely accepted by ATS systems. PDFs from code can have formatting issues that break ATS parsing.
+- [ ] Live job API integration (LinkedIn, Naukri, Indeed)
+- [ ] Cover letter generator agent
+- [ ] Job application tracker with status board
+- [ ] PostgreSQL / Supabase for persistent cloud storage
+- [ ] Side-by-side resume version comparison
+- [ ] Mock interview with voice input (Whisper API)
+
+---
+
+## 🧠 Engineering Decisions
+
+**Why a single-file Streamlit app?**
+Streamlit auto-discovers `.py` files in any folder named `pages/` and creates separate routes — which breaks when those pages depend on session state. Putting all pages as functions inside `app.py` eliminates this entire class of bugs.
+
+**Why results in `session_state`?**
+Every Streamlit button click triggers a full page re-run, which destroys any variables created during the previous run. Storing results in `session_state` immediately after the pipeline runs means DOCX and PDF downloads are always available as pre-generated bytes — no refresh, no data loss.
+
+**Why Groq over OpenAI?**
+Free tier with the fastest available LLM inference (LPU hardware). Perfect for portfolio demos with no rate limit anxiety or cost.
+
+**Why mock job data instead of live APIs?**
+LinkedIn/Indeed/Naukri require paid or restricted API access. A well-structured mock dataset demonstrates identical engineering skills without live dependencies that could break during a demo.
 
 **Why stateless agents?**
-Each agent takes inputs and returns outputs with no internal state. This makes them thread-safe, independently testable, and easy to replace with better implementations.
-
----
-
-## ⚠️ Limitations & Future Improvements
-
-### Current Limitations
-- Job listings are from a mock dataset (12 listings) — not live job boards
-- Resume DOCX generation creates a structured format, but may not preserve exact original formatting
-- No user authentication or session persistence
-- Single-language support (English only)
-
-### Planned Improvements
-- [ ] Integrate live job APIs (Adzuna, JSearch via RapidAPI)
-- [ ] Add PDF resume download option
-- [ ] Add resume version history and comparison
-- [ ] Support LinkedIn profile import
-- [ ] Add cover letter generation agent
-- [ ] Multi-language support (Hindi, etc.)
-- [ ] User accounts with saved searches
-- [ ] Email notification for new matching jobs
-
----
-
-## 👨‍💻 Author
-
-**Saksham Singh**
-- Built as a technical assessment submission
-- Demonstrates: multi-agent AI system design, NLP, LLM integration, full-stack Python development
+Single Responsibility Principle. Each agent can be tested, replaced, or improved independently. One agent failing does not crash the full pipeline.
 
 ---
 
 ## 📄 License
 
-MIT License — free to use, modify, and distribute.
+MIT — free to use, modify, and distribute with attribution.
+
+---
+
+## 👨‍💻 Author
+
+**Saksham Kumar**
+
+📧 sakshamkumar1136@gmail.com
+🔗 [LinkedIn](https://www.linkedin.com/in/saksham-kumar-66b410264/)
+💻 [GitHub](https://github.com/Saksham1136)
+
+---
+
+<div align="center">
+  <strong>⭐ Star this repo if it helped you!</strong><br><br>
+  Built with ❤️ using Groq · CrewAI · Streamlit
+</div>
