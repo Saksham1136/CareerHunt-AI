@@ -1,0 +1,40 @@
+# Environment variables — NEVER commit these
+.env
+*.env
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyc
+.pytest_cache/
+
+# Virtual environments
+venv/
+.venv/
+env/
+.env/
+
+# Generated resume outputs
+outputs/*.docx
+outputs/*.pdf
+outputs/*.txt
+!outputs/.gitkeep
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Streamlit cache
+.streamlit/
+
+# Jupyter notebooks
+*.ipynb
+.ipynb_checkpoints/
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/

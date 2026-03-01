@@ -1,0 +1,42 @@
+{
+  "action_verbs": [
+    "Developed", "Designed", "Built", "Implemented", "Optimized", "Led", "Managed",
+    "Architected", "Deployed", "Improved", "Reduced", "Increased", "Delivered",
+    "Collaborated", "Automated", "Scaled", "Analyzed", "Engineered", "Researched",
+    "Created", "Launched", "Maintained", "Migrated", "Integrated", "Trained"
+  ],
+  "soft_skills": [
+    "communication", "teamwork", "problem-solving", "leadership", "collaboration",
+    "adaptability", "time management", "critical thinking", "creativity", "attention to detail"
+  ],
+  "domains": {
+    "data_science": [
+      "machine learning", "deep learning", "neural networks", "statistical modeling",
+      "data analysis", "feature engineering", "model evaluation", "A/B testing",
+      "hypothesis testing", "regression", "classification", "clustering", "NLP",
+      "computer vision", "time series", "forecasting", "predictive modeling"
+    ],
+    "software_engineering": [
+      "REST API", "microservices", "distributed systems", "system design", "CI/CD",
+      "agile", "scrum", "unit testing", "code review", "version control", "scalability",
+      "reliability", "performance optimization", "database design", "OOP"
+    ],
+    "mlops": [
+      "MLflow", "Kubeflow", "model deployment", "model monitoring", "data pipeline",
+      "feature store", "model registry", "drift detection", "containerization",
+      "orchestration", "experiment tracking"
+    ],
+    "cloud": [
+      "AWS", "GCP", "Azure", "EC2", "S3", "Lambda", "BigQuery", "Cloud Run",
+      "Kubernetes", "Docker", "Terraform", "serverless", "cloud architecture"
+    ]
+  },
+  "ats_formatting_rules": {
+    "use_standard_headings": ["Summary", "Experience", "Education", "Skills", "Projects", "Certifications"],
+    "avoid": ["tables", "text boxes", "headers/footers", "images", "graphs", "special characters"],
+    "font_recommendations": ["Arial", "Calibri", "Times New Roman", "Georgia"],
+    "bullet_start_with_action_verb": true,
+    "quantify_achievements": true,
+    "keyword_density_tip": "Include job-specific keywords naturally in bullets"
+  }
+}

@@ -1,0 +1,28 @@
+# Multi-Agent AI Job Seeker — Python Dependencies
+# Install with: pip install -r requirements.txt
+
+# ── Core LLM & Agent Framework ──
+groq>=0.9.0                    # Groq API client for LLaMA 3 (free tier)
+crewai>=0.28.0                 # Multi-agent orchestration framework
+
+# ── Streamlit UI ──
+streamlit>=1.35.0              # Web UI framework
+
+# ── Document Generation ──
+python-docx>=1.1.0             # Create ATS-friendly DOCX resumes
+
+# ── Environment & Config ──
+python-dotenv>=1.0.0           # Load .env files for API keys
+
+# ── Authentication & Security ──
+bcrypt>=4.0.0                  # Password hashing (industry standard)
+
+# ── Utilities ──
+requests>=2.31.0               # HTTP requests (for future live job API)
+
+# ── Optional: NLP Enhancement (uncomment to install) ──
+# spacy>=3.7.0                 # Advanced NLP (larger install)
+# transformers>=4.40.0         # HuggingFace transformers
+# torch>=2.0.0                 # PyTorch (required for transformers)
+
+reportlab>=4.0.0                # PDF generation for interview prep download
