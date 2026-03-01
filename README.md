@@ -268,6 +268,16 @@ Single Responsibility Principle. Each agent can be tested, replaced, or improved
 
 ---
 
+# 📸 Screenshots
+
+> Coming soon — add screenshots of Job Search, ATS Score, Interview PDF here
+<img width="1096" height="778" alt="Screenshot 2026-03-02 034615" src="https://github.com/user-attachments/assets/a2e82cb2-4da4-4c51-99d1-9362e0ead256" />
+<img width="1908" height="810" alt="Screenshot 2026-03-02 034926" src="https://github.com/user-attachments/assets/3cf95dcb-6d1b-4274-a476-e00dbb2b0da7" />
+<img width="1839" height="763" alt="Screenshot 2026-03-02 035010" src="https://github.com/user-attachments/assets/599e3cd3-208f-4c44-9066-1c1c2e200157" />
+<img width="1877" height="759" alt="Screenshot 2026-03-02 035040" src="https://github.com/user-attachments/assets/eb9890a4-5c78-4143-98c2-28737e8c3c3a" />
+
+---
+
 ## 📄 License
 
 MIT — free to use, modify, and distribute with attribution.
